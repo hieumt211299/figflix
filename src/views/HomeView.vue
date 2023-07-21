@@ -1,128 +1,87 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
-import { ElMessageBox } from 'element-plus'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue'
+import router from '@/router'
 
-interface account {
-  firstName: string
-  lastName: string
-  email: string
-  password: string
-  phoneNumber: string
+const search = ref<string | number>('')
+const isShowMenu = ref(false)
+
+const handleChangeSearch = (data: string | number) => {
+  search.value = data
+  router.push({ name: 'search-movie', params: { inputText: search.value } })
 }
-const userLogin = reactive({
-  email: '',
-  password: ''
-})
-
-const accounts = ref<account[]>([])
-const isLogin = ref<boolean>(true)
-const router = useRouter()
-
-const errorEmail = ref(true)
-const ACOUNTS = 'acounts'
-
-const getAccountsFromLocal = () => {
-  const accountsStorage = window.localStorage.getItem(ACOUNTS)
-  return accountsStorage ? JSON.parse(accountsStorage) : []
+const handleClickMenu = () => {
+  isShowMenu.value = !isShowMenu.value
 }
-
-onMounted(() => {
-  accounts.value = getAccountsFromLocal()
-})
-
-const handleChangeInput = (data: string, type: keyof typeof userLogin) => {
-  userLogin[type] = data
-  if (type === 'email') {
-    errorEmail.value = validateEmail(data)
-  }
+const handleClickSignIn = () => {
+  console.log('handleClickSignIn')
 }
-
-const handleClickLogin = () => {
-  isLogin.value = authenticateUser(userLogin.email, userLogin.password)
-  if (isLogin.value) {
-    loginSuccessAlert()
-  }
-}
-
-const authenticateUser = (user: string, password: string) => {
-  return accounts.value.some((x) => x.email === user && x.password === password)
-}
-
-const loginSuccessAlert = () => {
-  ElMessageBox.alert('Login success', 'Title', {
-    confirmButtonText: 'OK',
-    callback: () => {
-      console.log('login success')
-      isLogin.value = true
-    }
-  })
-}
-
-const handleCreateNewAccount = () => {
-  router.push('/sign-up')
-}
-const validateEmail = (email: string) => {
-  const expression: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
-  let result = expression.test(email)
-  return result
+const handleClickLanguage = () => {
+  console.log('handleClickLanguage')
 }
 </script>
 
 <template>
-  <div class="v-login-wrap flex w-screen h-screen items-center justify-between">
-    <div class="h-full w-full flex items-center justify-center" style="flex: 2">
-      <div class="login w-80 flex flex-col gap-4">
-        <el-text class="sign-in w-full font-bold">Sign in</el-text>
-        <el-form class="flex flex-col gap-4">
-          <v-input
-            placeholder="Email Address *"
-            typeInput="text"
-            :isShow="false"
-            :error="errorEmail"
-            @handleChange="(data:string)=> handleChangeInput(data,'email')"
-          >
-          </v-input>
-          <v-input
-            placeholder="Password *"
-            typeInput="password"
-            isShow
-            :error="false"
-            @handleChange="(data: string)=> handleChangeInput(data, 'password')"
-          ></v-input>
-          <el-alert
-            v-if="isLogin === false"
-            title="user or password is not true"
-            type="error"
-            show-icon
-          />
-          <div class="flex items-center justify-between h-auto">
-            <v-button type="primary" @click="handleClickLogin">
-              <template #suffix>
-                <VArrowForWard></VArrowForWard>
-              </template>
-              <template #default> LOGIN </template>
-            </v-button>
-            <el-text class="cursor-pointer">Forgot your password?</el-text>
-          </div>
-          <v-button class="mt-10" type="info" @click="handleCreateNewAccount" style="width: 100%">
-            <template #default>CREATE NEW ACCOUNT</template>
-          </v-button>
-        </el-form>
-      </div>
+  <div class="v-home-screen h-screen relative">
+    <v-header
+      @handleClickMenu="handleClickMenu"
+      @handleClickLanguage="handleClickLanguage"
+      @handleClickSignIn="handleClickSignIn"
+    ></v-header>
+    <div class="header_menu" @click="handleClickMenu" :class="{ test: !isShowMenu }">
+      <el-text @click.stop="handleClickSignIn">LOGIN</el-text>
+      <el-text @click.stop="handleClickLanguage">LANGUAGE</el-text>
     </div>
 
-    <div class="side h-full w-full bg-gray-50 flex items-center justify-center" style="flex: 3">
-      <img src="../assets/login-promotion 1.png" alt="" style="width: 468px" />
+    <div class="content flex flex-col gap-5 items-center justify-center w-80 md:w-3/4">
+      <v-logo style="scale: 2" class="hidden py-5 lg:flex"></v-logo>
+      <el-text class="content-title" tag="b">Unlimited movies, TV shows, and more.</el-text>
+      <el-text size="large">Watch anywhere, Cancel anytime.</el-text>
+      <v-input
+        class="w-80 font-bold"
+        placeholder="Search Movie"
+        :search="search"
+        @handleChange="handleChangeSearch"
+      >
+        <template #prefix><v-search></v-search></template>
+      </v-input>
     </div>
   </div>
 </template>
 <style lang="scss">
-.v-login-wrap {
-  .login {
-    .el-text.sign-in {
-      font-size: 20px;
-      color: #000000;
+.v-home-screen {
+  .el-text {
+    color: white;
+  }
+  background-image: linear-gradient(to top, rgba(0, 0, 0, 0.52), rgba(0, 0, 0, 0.73)),
+    url('../assets/home_background.png');
+  .header_menu.test {
+    display: none;
+  }
+  .header_menu {
+    position: absolute;
+    top: 0px;
+
+    background-color: rgba(0, 0, 0, 0.521);
+    height: 100vh;
+    width: 100vw;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    .el-text {
+      font-size: 36px;
+    }
+  }
+  .content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    .content-title {
+      text-align: center;
+      font-size: 36px;
+      word-break: normal;
     }
   }
 }

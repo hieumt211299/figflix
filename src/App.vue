@@ -6,7 +6,15 @@ import './style.css'
 </script>
 
 <template>
-  <RouterView />
+  <div>
+    <RouterView />
+  </div>
 </template>
 
-<style></style>
+<style>
+.el-text {
+  &.el-text--danger {
+    color: #d62d30 !important;
+  }
+}
+</style>

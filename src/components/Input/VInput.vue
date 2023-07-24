@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// import console from 'console'
 import { onMounted, ref } from 'vue'
 
 interface Emits {

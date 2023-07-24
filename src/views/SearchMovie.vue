@@ -1,40 +1,38 @@
 <script setup lang="ts">
 import router from '@/router'
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted } from 'vue'
+import { movieService } from '../core/services/movieService'
 
-interface movie {
-  id: number
-  trailer: string
-  src: string
-}
-const listMovie = ref<movie[]>([])
+import { type Movie } from '../core/model/movie'
 
 const isShowMenu = ref(false)
-for (let i = 1; i <= 8; i++) {
-  const createMovie = reactive({
-    id: 0,
-    trailer: '',
-    src: ''
-  })
-  createMovie.id = i
-  createMovie.src = `movies/movie${i}.png`
-  listMovie.value.push(createMovie)
-}
 
 const search = ref<string | number>(String(router.currentRoute.value.params.inputText || ''))
+const listMovie = ref<Movie[]>([])
+
+const handleSearchMovie = (data: string) => {
+  const searchMovie = movieService().searchMovie(data)
+  searchMovie.then((a) => {
+    a = a.filter((x: any) => x.poster_path && x.backdrop_path)
+    listMovie.value.push(...a)
+  })
+}
 
 onMounted(() => {
-  search.value = String(router.currentRoute.value.params.inputText || '')
+  handleSearchMovie(String(search.value))
 })
 
-const handeleClickMovie = (data: number) => {
-  console.log(data)
-  router.push({ name: 'movie-detail', params: { id: data } })
+const handeleClickMovie = (data: Movie) => {
+  console.log('run')
+
+  router.push({ name: 'movie', params: { id: data.id } })
 }
 const handleChangeSearch = (data: string | number) => {
   if (data) {
     search.value = data
     router.push({ name: 'search-movie', params: { inputText: search.value } })
+    listMovie.value = []
+    handleSearchMovie(String(search.value))
   }
 }
 
@@ -49,17 +47,15 @@ const handleClickLanguage = () => {
 }
 </script>
 <template>
-  <div class="v-search-screen lg:px-16">
+  <div class="v-search-screen lg:px-16 min-h-screen">
     <v-header
+      :isShowMenu="isShowMenu"
       @handleClickMenu="handleClickMenu"
       @handleClickLanguage="handleClickLanguage"
       @handleClickSignIn="handleClickSignIn"
     >
     </v-header>
-    <div class="header_menu" @click="handleClickMenu" :class="{ test: !isShowMenu }">
-      <el-text style="color: white" @click.stop="handleClickSignIn">LOGIN</el-text>
-      <el-text style="color: white" @click.stop="handleClickLanguage">LANGUAGE</el-text>
-    </div>
+
     <v-input
       :search="search"
       class="w-full font-bold p-5 lg:w-96"
@@ -73,7 +69,7 @@ const handleClickLanguage = () => {
       class="list-movies px-5 py-10 grid grid-cols-1 gap-10 md:grid-cols-2 lg:rounded-3xl lg:px-40 lg:pt-14 lg:grid-cols-5 lg:gap-x-12 lg:gap-y-16"
     >
       <div v-for="(movie, index) in listMovie" :key="index">
-        <v-image :movieDetail="movie" @handleClickImage="handeleClickMovie"></v-image>
+        <v-image :src="movie.poster_path" @click="handeleClickMovie(movie)"></v-image>
       </div>
     </div>
 
@@ -84,25 +80,6 @@ const handleClickLanguage = () => {
 <style lang="scss">
 .v-search-screen {
   background-color: black;
-  .header_menu.test {
-    display: none;
-  }
-  .header_menu {
-    position: absolute;
-    top: 0px;
-
-    background-color: rgba(0, 0, 0, 0.521);
-    height: 100vh;
-    width: 100vw;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 20px;
-    .el-text {
-      font-size: 36px;
-    }
-  }
   .list-movies {
     background-color: #1d1d1d;
   }

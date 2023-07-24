@@ -37,7 +37,7 @@
 <style lang="scss">
 .footer {
   .el-text {
-    color: #606266;
+    color: #606266 !important;
   }
 }
 </style>

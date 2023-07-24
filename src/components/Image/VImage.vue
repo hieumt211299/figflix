@@ -1,26 +1,12 @@
 <script setup lang="ts">
-interface Emits {
-  (event: 'handleClickImage', movie: number): void
-}
-interface movie {
-  id: number
-  trailer: string
-  src: string
-}
+import { computed } from 'vue'
 
 interface Props {
-  movieDetail: movie
+  src: string
 }
-const emit = defineEmits<Emits>()
 const props = defineProps<Props>()
-let test = `/src/assets/${props.movieDetail.src}`
-
-test = test.replace(/-/g, '/')
-
-const handleClickImage = () => {
-  emit('handleClickImage', props.movieDetail.id)
-}
+const test = computed(() => `https://image.tmdb.org/t/p/original${props.src}`)
 </script>
 <template>
-  <img :src="test" alt="asd" @click="handleClickImage" />
+  <img :src="test" alt="" class="h-full w-full object-cover" loading="lazy" />
 </template>

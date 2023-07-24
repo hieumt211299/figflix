@@ -7,7 +7,7 @@ const isShowMenu = ref(false)
 
 const handleChangeSearch = (data: string | number) => {
   search.value = data
-  router.push({ name: 'search-movie', params: { inputText: search.value } })
+  router.push({ name: 'search-movie', params: { inputText: data } })
 }
 const handleClickMenu = () => {
   isShowMenu.value = !isShowMenu.value
@@ -23,14 +23,15 @@ const handleClickLanguage = () => {
 <template>
   <div class="v-home-screen h-screen relative">
     <v-header
+      :isShowMenu="isShowMenu"
       @handleClickMenu="handleClickMenu"
       @handleClickLanguage="handleClickLanguage"
       @handleClickSignIn="handleClickSignIn"
     ></v-header>
-    <div class="header_menu" @click="handleClickMenu" :class="{ test: !isShowMenu }">
+    <!-- <div class="header_menu" @click="handleClickMenu" :class="{ menu: !isShowMenu }">
       <el-text @click.stop="handleClickSignIn">LOGIN</el-text>
       <el-text @click.stop="handleClickLanguage">LANGUAGE</el-text>
-    </div>
+    </div> -->
 
     <div class="content flex flex-col gap-5 items-center justify-center w-80 md:w-3/4">
       <v-logo style="scale: 2" class="hidden py-5 lg:flex"></v-logo>
@@ -49,30 +50,11 @@ const handleClickLanguage = () => {
 </template>
 <style lang="scss">
 .v-home-screen {
-  .el-text {
-    color: white;
-  }
+  // .el-text {
+  //   color: white;
+  // }
   background-image: linear-gradient(to top, rgba(0, 0, 0, 0.52), rgba(0, 0, 0, 0.73)),
     url('../assets/home_background.png');
-  .header_menu.test {
-    display: none;
-  }
-  .header_menu {
-    position: absolute;
-    top: 0px;
-
-    background-color: rgba(0, 0, 0, 0.521);
-    height: 100vh;
-    width: 100vw;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 20px;
-    .el-text {
-      font-size: 36px;
-    }
-  }
   .content {
     position: absolute;
     top: 50%;

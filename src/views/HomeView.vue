@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import router from '@/router'
+import { ElNotification } from 'element-plus'
 
 const search = ref<string | number>('')
 const isShowMenu = ref(false)
@@ -13,10 +14,18 @@ const handleClickMenu = () => {
   isShowMenu.value = !isShowMenu.value
 }
 const handleClickSignIn = () => {
-  console.log('handleClickSignIn')
+  ElNotification({
+    title: 'Warning',
+    message: 'In progress',
+    type: 'warning'
+  })
 }
 const handleClickLanguage = () => {
-  console.log('handleClickLanguage')
+  ElNotification({
+    title: 'Warning',
+    message: 'In progress',
+    type: 'warning'
+  })
 }
 </script>
 

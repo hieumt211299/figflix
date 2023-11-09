@@ -3,6 +3,7 @@ import router from '@/router'
 import { ref, onMounted } from 'vue'
 import { movieService } from '../core/services/movieService'
 import { type Movie } from '../core/model/movie'
+import { ElNotification } from 'element-plus'
 
 const idMovie = ref<number>(Number(router.currentRoute.value.params.id))
 const isShowMenu = ref(false)
@@ -76,19 +77,39 @@ const handleClickBack = () => {
   router.go(-1)
 }
 const handleClickPlay = () => {
-  console.log('play')
+  ElNotification({
+    title: 'Warning',
+    message: 'In progress',
+    type: 'warning'
+  })
 }
 const handleClickLike = () => {
-  console.log('like')
+  ElNotification({
+    title: 'Success',
+    message: 'Like for the movie',
+    type: 'success'
+  })
 }
 const handleClickDisLike = () => {
-  console.log('dis like')
+  ElNotification({
+    title: 'Success',
+    message: 'Dis like for the movie',
+    type: 'success'
+  })
 }
 const handleClickSignIn = () => {
-  console.log('handleClickSignIn')
+  ElNotification({
+    title: 'Warning',
+    message: 'In progress',
+    type: 'warning'
+  })
 }
 const handleClickLanguage = () => {
-  console.log('handleClickLanguage')
+  ElNotification({
+    title: 'Warning',
+    message: 'In progress',
+    type: 'warning'
+  })
 }
 const handleClickMenu = () => {
   isShowMenu.value = !isShowMenu.value

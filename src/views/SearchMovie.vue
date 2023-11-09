@@ -4,11 +4,14 @@ import { ref, onMounted } from 'vue'
 import { movieService } from '../core/services/movieService'
 
 import { type Movie } from '../core/model/movie'
+import { ElNotification } from 'element-plus'
 
 const isShowMenu = ref(false)
 
 const search = ref<string | number>(String(router.currentRoute.value.params.inputText || ''))
 const listMovie = ref<Movie[]>([])
+
+const popularMovies = ref<Movie[]>([])
 
 const handleSearchMovie = (data: string) => {
   const searchMovie = movieService().searchMovie(data)
@@ -16,6 +19,17 @@ const handleSearchMovie = (data: string) => {
     a = a.filter((x: any) => x.poster_path && x.backdrop_path)
     listMovie.value.push(...a)
   })
+  if (!listMovie.value.length) {
+    console.log('here')
+    const getPopularMovies = movieService().getPopularMovies()
+    const getPopular = () => {
+      console.log('getPopular')
+      getPopularMovies.then((a) => {
+        popularMovies.value.push(...a.results)
+      })
+    }
+    getPopular()
+  }
 }
 
 onMounted(() => {
@@ -40,10 +54,18 @@ const handleClickMenu = () => {
   isShowMenu.value = !isShowMenu.value
 }
 const handleClickSignIn = () => {
-  console.log('handleClickSignIn')
+  ElNotification({
+    title: 'Warning',
+    message: 'In progress',
+    type: 'warning'
+  })
 }
 const handleClickLanguage = () => {
-  console.log('handleClickLanguage')
+  ElNotification({
+    title: 'Warning',
+    message: 'In progress',
+    type: 'warning'
+  })
 }
 </script>
 <template>
@@ -66,9 +88,18 @@ const handleClickLanguage = () => {
     </v-input>
 
     <div
+      v-if="listMovie.length"
       class="list-movies px-5 py-10 grid grid-cols-1 gap-10 md:grid-cols-2 lg:rounded-3xl lg:px-40 lg:pt-14 lg:grid-cols-5 lg:gap-x-12 lg:gap-y-16"
     >
       <div v-for="(movie, index) in listMovie" :key="index">
+        <v-image :src="movie.poster_path" @click="handeleClickMovie(movie)"></v-image>
+      </div>
+    </div>
+    <div
+      v-else
+      class="list-movies px-5 py-10 grid grid-cols-1 gap-10 md:grid-cols-2 lg:rounded-3xl lg:px-40 lg:pt-14 lg:grid-cols-5 lg:gap-x-12 lg:gap-y-16"
+    >
+      <div v-for="(movie, index) in popularMovies" :key="index">
         <v-image :src="movie.poster_path" @click="handeleClickMovie(movie)"></v-image>
       </div>
     </div>

@@ -11,10 +11,11 @@
       "path": "./tsconfig.vitest.json"
     }
   ],
-  
-    "compilerOptions": {
-      // ...
-      "types": ["element-plus/global"]
-    }
-  
+
+  "compilerOptions": {
+    // ...
+
+    "allowJs": true,
+    "types": ["element-plus/global"]
+  }
 }
